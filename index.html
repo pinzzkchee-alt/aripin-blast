@@ -8,15 +8,27 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f4f7fc;color:#17233b;font-family:Arial,sans-serif}
-.sidebar{background:#fff;padding:25px;width:230px;position:fixed;inset:0 auto 0 0;border-right:1px solid #e5eaf2}
+button,input{font:inherit}
+button{cursor:pointer}
+#auth-section{max-width:410px;margin:55px auto;padding:28px;background:white;border-radius:18px;box-shadow:0 8px 35px #182b4b16}
+.auth-logo{text-align:center;font-size:25px;font-weight:bold;color:#17233b}
+.auth-logo span,.logo span{color:#3978f6}
+.auth-sub{text-align:center;color:#8491a5;font-size:13px;margin:9px 0 25px}
+.auth-input{width:100%;padding:13px;border:1px solid #dce3ef;border-radius:9px;margin:7px 0;outline:none}
+.auth-input:focus{border-color:#3978f6}
+.auth-btn{width:100%;padding:13px;border:0;border-radius:9px;background:#2868e8;color:white;margin-top:10px;font-weight:bold}
+.auth-btn.secondary{background:#17233b}
+#auth-message{font-size:13px;line-height:1.5;color:#52627a}
+#app{display:none}
+.sidebar{background:white;padding:24px;width:230px;position:fixed;inset:0 auto 0 0;border-right:1px solid #e5eaf2}
 .logo{font-size:22px;font-weight:bold;margin-bottom:35px}
-.logo span{color:#3978f6}
 nav a{display:block;padding:13px;margin:5px 0;text-decoration:none;color:#63718a;border-radius:9px;font-size:14px}
-nav a.active{background:#edf4ff;color:#2765df}
+nav a.active,nav a:hover{background:#edf4ff;color:#2765df}
 main{margin-left:230px;padding:30px;max-width:1400px}
 header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
 h1{font-size:25px;margin:0}
 .user{background:white;padding:12px 17px;border-radius:10px;font-size:13px}
+.logout{background:#fff0f0;color:#c33;border:0;border-radius:8px;padding:10px 13px;margin-left:8px}
 .hero{background:linear-gradient(110deg,#235fe0,#478df8);padding:28px;border-radius:16px;color:white}
 .hero h2{margin:0 0 9px}.hero p{margin:0;color:#e4edff;font-size:14px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:20px}
@@ -26,6 +38,10 @@ h1{font-size:25px;margin:0}
 .content{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:20px}
 .content h3{font-size:16px}
 .info{font-size:13px;color:#8290a6;line-height:1.8}
+.page{display:none}
+.page.active{display:block}
+.page-card{background:white;padding:22px;border:1px solid #e8edf6;border-radius:14px;margin-top:18px}
+.page-card p{color:#8290a6;font-size:14px;line-height:1.7}
 footer{font-size:11px;color:#8b98aa;margin-top:25px;line-height:1.7}
 @media(max-width:750px){
 .sidebar{position:static;width:auto;padding:15px}
@@ -35,107 +51,205 @@ nav a{white-space:nowrap;padding:10px}
 main{margin:0;padding:16px}
 .stats{grid-template-columns:repeat(2,1fr)}
 .content{grid-template-columns:1fr}
-header{gap:10px}
+header{gap:10px;align-items:flex-start}
 .user{display:none}
+.logout{margin-left:0}
 }
 </style>
 </head>
 <body>
-  <div id="auth-section" style="max-width:400px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 4px 20px #ddd;font-family:Arial">
-  <h2 style="text-align:center;color:#2563eb">ARIPIN BLAST</h2>
-  <h3>Login / Register</h3>
 
-  <input id="auth-email" type="email" placeholder="Email" style="width:100%;padding:12px;margin:8px 0;box-sizing:border-box">
+<section id="auth-section">
+  <div class="auth-logo">ARIPIN <span>BLAST</span></div>
+  <p class="auth-sub">Masuk untuk mengelola workspace kamu</p>
+  <h3 id="auth-title">Login Akun</h3>
+  <input class="auth-input" id="auth-email" type="email" placeholder="Alamat email" autocomplete="email">
+  <input class="auth-input" id="auth-password" type="password" placeholder="Password" autocomplete="current-password">
+  <button class="auth-btn" id="auth-submit" onclick="loginUser()">Masuk</button>
+  <button class="auth-btn secondary" id="register-button" onclick="registerUser()">Daftar Akun</button>
+  <p id="auth-message" aria-live="polite"></p>
+</section>
 
-  <input id="auth-password" type="password" placeholder="Password" style="width:100%;padding:12px;margin:8px 0;box-sizing:border-box">
-
-  <button onclick="registerUser()" style="width:100%;padding:12px;background:#2563eb;color:white;border:0;border-radius:8px;margin-top:10px">Daftar</button>
-
-  <button onclick="loginUser()" style="width:100%;padding:12px;background:#111827;color:white;border:0;border-radius:8px;margin-top:8px">Masuk</button>
-
-  <p id="auth-message"></p>
-  </div>
+<div id="app">
 <aside class="sidebar">
-<div class="logo">ARIPIN <span>BLAST</span></div>
-<nav>
-<a class="active" href="#">Dashboard</a>
-<a href="#kontak">Kontak</a>
-<a href="#kampanye">Kampanye</a>
-<a href="#jadwal">Jadwal</a>
-<a href="#riwayat">Riwayat</a>
-<a href="#dompet">Dompet</a>
-<a href="#pengaturan">Pengaturan</a>
-</nav>
+  <div class="logo">ARIPIN <span>BLAST</span></div>
+  <nav>
+    <a class="active" href="#dashboard" onclick="showPage('dashboard',this)">Dashboard</a>
+    <a href="#kontak" onclick="showPage('kontak',this)">Kontak</a>
+    <a href="#kampanye" onclick="showPage('kampanye',this)">Kampanye</a>
+    <a href="#jadwal" onclick="showPage('jadwal',this)">Jadwal</a>
+    <a href="#riwayat" onclick="showPage('riwayat',this)">Riwayat</a>
+    <a href="#dompet" onclick="showPage('dompet',this)">Dompet</a>
+    <a href="#pengaturan" onclick="showPage('pengaturan',this)">Pengaturan</a>
+  </nav>
 </aside>
+
 <main>
 <header>
-<div><p class="label">WORKSPACE / DASHBOARD</p><h1>Dashboard</h1></div>
-<div class="user">Admin Workspace</div>
+  <div>
+    <p class="label">WORKSPACE / ARIPIN BLAST</p>
+    <h1 id="page-title">Dashboard</h1>
+  </div>
+  <div>
+    <span class="user" id="user-email">Pengguna</span>
+    <button class="logout" onclick="logoutUser()">Logout</button>
+  </div>
 </header>
-<section class="hero">
-<h2>Selamat datang di ARIPIN BLAST!</h2>
-<p>Kelola kontak dan kampanye WhatsApp dalam satu tempat.</p>
+
+<section class="page active" id="page-dashboard">
+  <div class="hero">
+    <h2>Selamat datang di ARIPIN BLAST!</h2>
+    <p>Kelola workspace kampanye kamu dalam satu tempat.</p>
+  </div>
+  <section class="stats">
+    <div class="card"><div class="label">Total Kontak</div><div class="number">0</div></div>
+    <div class="card"><div class="label">Pesan Terkirim</div><div class="number">0</div></div>
+    <div class="card"><div class="label">Pesan Gagal</div><div class="number">0</div></div>
+    <div class="card"><div class="label">Saldo Tersedia</div><div class="number">Rp0</div></div>
+  </section>
+  <section class="content">
+    <div class="card">
+      <h3>Aktivitas Pengiriman</h3>
+      <p class="info">Belum ada aktivitas pengiriman.</p>
+    </div>
+    <div class="card">
+      <h3>Langkah Berikutnya</h3>
+      <p class="info">Hubungkan backend aman dan WhatsApp Business Platform resmi sebelum mengaktifkan pengiriman.</p>
+    </div>
+  </section>
 </section>
-<section class="stats">
-<div class="card"><div class="label">Total Kontak</div><div class="number">0</div></div>
-<div class="card"><div class="label">Pesan Terkirim</div><div class="number">0</div></div>
-<div class="card"><div class="label">Pesan Gagal</div><div class="number">0</div></div>
-<div class="card"><div class="label">Saldo Tersedia</div><div class="number">Rp0</div></div>
+
+<section class="page" id="page-kontak">
+  <div class="page-card"><h2>Kontak</h2><p>Area pengelolaan kontak akan dibuat pada tahap berikutnya. Tambahkan hanya kontak yang memberikan persetujuan untuk menerima pesan.</p></div>
 </section>
-<section class="content">
-<div class="card">
-<h3>Aktivitas Pengiriman</h3>
-<p class="info">Belum ada aktivitas pengiriman. Aktivitas akan muncul setelah sistem terhubung.</p>
-</div>
-<div class="card">
-<h3>Langkah Berikutnya</h3>
-<p class="info">1. Hubungkan WhatsApp Business Platform.<br>2. Tambahkan kontak yang sudah memberikan persetujuan.<br>3. Siapkan template pesan resmi.</p>
-</div>
+<section class="page" id="page-kampanye">
+  <div class="page-card"><h2>Kampanye</h2><p>Area pembuatan kampanye dan template pesan. Pengiriman belum diaktifkan.</p></div>
 </section>
-<footer>
-ARIPIN BLAST — Preview Dashboard v1.0.<br>
-Pengiriman pesan dan fitur akun belum aktif. Diperlukan backend aman dan integrasi resmi WhatsApp Business Platform.
-</footer>
+<section class="page" id="page-jadwal">
+  <div class="page-card"><h2>Jadwal</h2><p>Area penjadwalan kampanye. Fitur jadwal memerlukan backend.</p></div>
+</section>
+<section class="page" id="page-riwayat">
+  <div class="page-card"><h2>Riwayat</h2><p>Riwayat pesan akan ditampilkan setelah backend tersedia.</p></div>
+</section>
+<section class="page" id="page-dompet">
+  <div class="page-card"><h2>Dompet</h2><p>Saldo dan transaksi belum aktif. Saldo tidak dapat ditambahkan atau dicairkan sebelum sistem transaksi aman dibuat.</p></div>
+</section>
+<section class="page" id="page-pengaturan">
+  <div class="page-card"><h2>Pengaturan</h2><p>Pengaturan akun dan workspace.</p></div>
+</section>
+
+<footer>ARIPIN BLAST — Workspace Preview.<br>Login menggunakan Supabase Authentication. Fitur operasional memerlukan backend aman.</footer>
 </main>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const SUPABASE_URL = "https://qrzfetlrwdhqmutztbbt.supabase.co";
-  const SUPABASE_ANON_KEY = "GANTI_DENGAN_PUBLISHABLE_KEY_BARU";
+const SUPABASE_URL = "https://qrzfetlrwdhqmutztbbt.supabase.co";
+const SUPABASE_ANON_KEY = "TEMPEL_PUBLISHABLE_KEY_BARU_DI_SINI";
 
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );sb_publishable_P6diFHBdl9Z2aA9SpNM4vw_wS10QG7Q
-  async function registerUser() {
-  const email = document.getElementById("auth-email").value;
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+"sb_publishable_P6diFHBdl9Z2aA9SpNM4vw_wS10QG7Q";
+  
+
+const authSection = document.getElementById("auth-section");
+const appSection = document.getElementById("app");
+const authMessage = document.getElementById("auth-message");
+
+function showApp(user) {
+  authSection.style.display = "none";
+  appSection.style.display = "block";
+  document.getElementById("user-email").textContent = user.email || "Pengguna";
+}
+
+function showLogin() {
+  appSection.style.display = "none";
+  authSection.style.display = "block";
+}
+
+async function registerUser() {
+  const email = document.getElementById("auth-email").value.trim();
   const password = document.getElementById("auth-password").value;
-  const message = document.getElementById("auth-message");
 
-  const { error } = await supabaseClient.auth.signUp({
-    email,
-    password
-  });
+  if (!email || password.length < 6) {
+    authMessage.textContent = "Masukkan email dan password minimal 6 karakter.";
+    return;
+  }
 
-  message.textContent = error
-    ? error.message
-    : "Pendaftaran berhasil. Periksa email untuk verifikasi.";
+  authMessage.textContent = "Memproses pendaftaran...";
+  const { data, error } = await supabaseClient.auth.signUp({email,password});
+
+  if (error) {
+    authMessage.textContent = error.message;
+    return;
+  }
+
+  authMessage.textContent = data.session
+    ? "Pendaftaran berhasil."
+    : "Pendaftaran berhasil. Silakan periksa email untuk verifikasi sebelum masuk.";
 }
 
 async function loginUser() {
-  const email = document.getElementById("auth-email").value;
+  const email = document.getElementById("auth-email").value.trim();
   const password = document.getElementById("auth-password").value;
-  const message = document.getElementById("auth-message");
 
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  message.textContent = error
-    ? error.message
-    : "Login berhasil!";
+  if (!email || !password) {
+    authMessage.textContent = "Isi email dan password terlebih dahulu.";
+    return;
   }
+
+  authMessage.textContent = "Memeriksa akun...";
+  const { data, error } = await supabaseClient.auth.signInWithPassword({email,password});
+
+  if (error) {
+    authMessage.textContent = error.message;
+    return;
+  }
+
+  authMessage.textContent = "";
+  showApp(data.user);
+}
+
+async function logoutUser() {
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) {
+    alert(error.message);
+    return;
+  }
+  showLogin();
+}
+
+function showPage(page, link) {
+  document.querySelectorAll(".page").forEach(el => el.classList.remove("active"));
+  document.getElementById("page-" + page).classList.add("active");
+  document.querySelectorAll("nav a").forEach(el => el.classList.remove("active"));
+  link.classList.add("active");
+  document.getElementById("page-title").textContent =
+    link.textContent.trim();
+}
+
+async function checkSession() {
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error) {
+    authMessage.textContent = error.message;
+    showLogin();
+    return;
+  }
+  if (data.session) {
+    showApp(data.session.user);
+  } else {
+    showLogin();
+  }
+}
+
+supabaseClient.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_IN" && session) showApp(session.user);
+  if (event === "SIGNED_OUT") showLogin();
+});
+
+checkSession();
 </script>
 </body>
-</html>
+  </html>
+  
