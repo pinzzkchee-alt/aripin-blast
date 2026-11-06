@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARIPIN BLAST</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f7fc;color:#17233b;font-family:Arial,sans-serif}
+.sidebar{background:#fff;padding:25px;width:230px;position:fixed;inset:0 auto 0 0;border-right:1px solid #e5eaf2}
+.logo{font-size:22px;font-weight:bold;margin-bottom:35px}
+.logo span{color:#3978f6}
+nav a{display:block;padding:13px;margin:5px 0;text-decoration:none;color:#63718a;border-radius:9px;font-size:14px}
+nav a.active{background:#edf4ff;color:#2765df}
+main{margin-left:230px;padding:30px;max-width:1400px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+h1{font-size:25px;margin:0}
+.user{background:white;padding:12px 17px;border-radius:10px;font-size:13px}
+.hero{background:linear-gradient(110deg,#235fe0,#478df8);padding:28px;border-radius:16px;color:white}
+.hero h2{margin:0 0 9px}.hero p{margin:0;color:#e4edff;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:20px}
+.card{background:white;padding:20px;border-radius:14px;border:1px solid #e8edf6}
+.label{font-size:13px;color:#8290a6}
+.number{font-size:28px;font-weight:bold;margin-top:12px}
+.content{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:20px}
+.content h3{font-size:16px}
+.info{font-size:13px;color:#8290a6;line-height:1.8}
+footer{font-size:11px;color:#8b98aa;margin-top:25px;line-height:1.7}
+@media(max-width:750px){
+.sidebar{position:static;width:auto;padding:15px}
+.logo{margin-bottom:12px}
+nav{display:flex;overflow:auto}
+nav a{white-space:nowrap;padding:10px}
+main{margin:0;padding:16px}
+.stats{grid-template-columns:repeat(2,1fr)}
+.content{grid-template-columns:1fr}
+header{gap:10px}
+.user{display:none}
+}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<div class="logo">ARIPIN <span>BLAST</span></div>
+<nav>
+<a class="active" href="#">Dashboard</a>
+<a href="#kontak">Kontak</a>
+<a href="#kampanye">Kampanye</a>
+<a href="#jadwal">Jadwal</a>
+<a href="#riwayat">Riwayat</a>
+<a href="#dompet">Dompet</a>
+<a href="#pengaturan">Pengaturan</a>
+</nav>
+</aside>
+<main>
+<header>
+<div><p class="label">WORKSPACE / DASHBOARD</p><h1>Dashboard</h1></div>
+<div class="user">Admin Workspace</div>
+</header>
+<section class="hero">
+<h2>Selamat datang di ARIPIN BLAST!</h2>
+<p>Kelola kontak dan kampanye WhatsApp dalam satu tempat.</p>
+</section>
+<section class="stats">
+<div class="card"><div class="label">Total Kontak</div><div class="number">0</div></div>
+<div class="card"><div class="label">Pesan Terkirim</div><div class="number">0</div></div>
+<div class="card"><div class="label">Pesan Gagal</div><div class="number">0</div></div>
+<div class="card"><div class="label">Saldo Tersedia</div><div class="number">Rp0</div></div>
+</section>
+<section class="content">
+<div class="card">
+<h3>Aktivitas Pengiriman</h3>
+<p class="info">Belum ada aktivitas pengiriman. Aktivitas akan muncul setelah sistem terhubung.</p>
+</div>
+<div class="card">
+<h3>Langkah Berikutnya</h3>
+<p class="info">1. Hubungkan WhatsApp Business Platform.<br>2. Tambahkan kontak yang sudah memberikan persetujuan.<br>3. Siapkan template pesan resmi.</p>
+</div>
+</section>
+<footer>
+ARIPIN BLAST — Preview Dashboard v1.0.<br>
+Pengiriman pesan dan fitur akun belum aktif. Diperlukan backend aman dan integrasi resmi WhatsApp Business Platform.
+</footer>
+</main>
+</body>
+</html>
