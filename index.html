@@ -41,6 +41,20 @@ header{gap:10px}
 </style>
 </head>
 <body>
+  <div id="auth-section" style="max-width:400px;margin:40px auto;padding:25px;background:white;border-radius:15px;box-shadow:0 4px 20px #ddd;font-family:Arial">
+  <h2 style="text-align:center;color:#2563eb">ARIPIN BLAST</h2>
+  <h3>Login / Register</h3>
+
+  <input id="auth-email" type="email" placeholder="Email" style="width:100%;padding:12px;margin:8px 0;box-sizing:border-box">
+
+  <input id="auth-password" type="password" placeholder="Password" style="width:100%;padding:12px;margin:8px 0;box-sizing:border-box">
+
+  <button onclick="registerUser()" style="width:100%;padding:12px;background:#2563eb;color:white;border:0;border-radius:8px;margin-top:10px">Daftar</button>
+
+  <button onclick="loginUser()" style="width:100%;padding:12px;background:#111827;color:white;border:0;border-radius:8px;margin-top:8px">Masuk</button>
+
+  <p id="auth-message"></p>
+  </div>
 <aside class="sidebar">
 <div class="logo">ARIPIN <span>BLAST</span></div>
 <nav>
@@ -93,6 +107,35 @@ Pengiriman pesan dan fitur akun belum aktif. Diperlukan backend aman dan integra
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );sb_publishable_P6diFHBdl9Z2aA9SpNM4vw_wS10QG7Q
+  async function registerUser() {
+  const email = document.getElementById("auth-email").value;
+  const password = document.getElementById("auth-password").value;
+  const message = document.getElementById("auth-message");
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  message.textContent = error
+    ? error.message
+    : "Pendaftaran berhasil. Periksa email untuk verifikasi.";
+}
+
+async function loginUser() {
+  const email = document.getElementById("auth-email").value;
+  const password = document.getElementById("auth-password").value;
+  const message = document.getElementById("auth-message");
+
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  message.textContent = error
+    ? error.message
+    : "Login berhasil!";
+  }
 </script>
 </body>
 </html>
