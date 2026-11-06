@@ -120,7 +120,29 @@ header{gap:10px;align-items:flex-start}
 </section>
 
 <section class="page" id="page-kontak">
-  <div class="page-card"><h2>Kontak</h2><p>Area pengelolaan kontak akan dibuat pada tahap berikutnya. Tambahkan hanya kontak yang memberikan persetujuan untuk menerima pesan.</p></div>
+  <div class="page-card">
+    <h2>Kontak</h2>
+    <p>Tambahkan kontak yang sudah menyetujui untuk menerima pesan.</p>
+
+    <form id="contact-form">
+      <input class="auth-input" id="contact-name"
+        type="text" placeholder="Nama kontak" required>
+
+      <input class="auth-input" id="contact-phone"
+        type="tel" placeholder="Nomor HP" required>
+
+      <label>
+        <input id="contact-consent" type="checkbox" required>
+        Kontak sudah memberi izin menerima pesan.
+      </label>
+
+      <button class="auth-btn" type="submit">Simpan Kontak</button>
+    </form>
+
+    <p id="contact-message"></p>
+    <h3>Daftar Kontak</h3>
+    <div id="contact-list">Belum ada kontak.</div>
+  </div>
 </section>
 <section class="page" id="page-kampanye">
   <div class="page-card"><h2>Kampanye</h2><p>Area pembuatan kampanye dan template pesan. Pengiriman belum diaktifkan.</p></div>
@@ -152,7 +174,77 @@ const supabaseClient = window.supabase.createClient(
   SUPABASE_ANON_KEY
 );
   
+const contactForm = document.getElementById("contact-form");
+const contactMessage = document.getElementById("contact-message");
+const contactList = document.getElementById("contact-list");
 
+contactForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) {
+    contactMessage.textContent = "Silakan login ulang.";
+    return;
+  }
+
+  const name = document.getElementById("contact-name").value.trim();
+  const phone = document.getElementById("contact-phone").value.trim();
+  const consent = document.getElementById("contact-consent").checked;
+
+  if (!name || !phone || !consent) {
+    contactMessage.textContent = "Lengkapi data dan izin kontak.";
+    return;
+  }
+
+  contactMessage.textContent = "Menyimpan...";
+
+  const { error } = await supabaseClient.from("contacts").insert({
+    user_id: user.id,
+    name: name,
+    phone: phone,
+    consent_given: true,
+    consent_at: new Date().toISOString()
+  });
+
+  if (error) {
+    contactMessage.textContent = "Gagal: " + error.message;
+    return;
+  }
+
+  contactForm.reset();
+  contactMessage.textContent = "Kontak berhasil disimpan!";
+  loadContacts();
+});
+
+async function loadContacts() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  if (!user) return;
+
+  const { data, error } = await supabaseClient
+    .from("contacts")
+    .select("id,name,phone,created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    contactList.textContent = "Gagal memuat kontak.";
+    return;
+  }
+
+  contactList.replaceChildren();
+
+  if (!data.length) {
+    contactList.textContent = "Belum ada kontak.";
+    return;
+  }
+
+  data.forEach(contact => {
+    const item = document.createElement("p");
+    item.textContent = contact.name + " — " + contact.phone;
+    contactList.appendChild(item);
+  });
+  }
 const authSection = document.getElementById("auth-section");
 const appSection = document.getElementById("app");
 const authMessage = document.getElementById("auth-message");
@@ -161,6 +253,7 @@ function showApp(user) {
   authSection.style.display = "none";
   appSection.style.display = "block";
   document.getElementById("user-email").textContent = user.email || "Pengguna";
+  loadContacts();
 }
 
 function showLogin() {
